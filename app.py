@@ -52,7 +52,7 @@ st.title('Movie Recommendation System')
 
 st.write('### Enter a movie title to get recommendations')
 
-movie_title = st.text_input('Movie Title', placeholder='The Avengers')
+movie_title = st.selectbox('Movie Title', movies['title'].values, placeholder='The Avengers')
 
 if st.button('Get Recommendations'):
     if movie_title:
