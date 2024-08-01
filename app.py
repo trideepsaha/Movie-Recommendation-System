@@ -1,58 +1,54 @@
-import pickle
 import streamlit as st
 import pandas as pd
-import requests
+import pickle
+import numpy as np
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
 
-def fetch_poster(movie_id):
-    response = requests.get('https://api.themoviedb.org/3/movie/{}?api_key=0f5c0501eda1fa91be771631d724af9a&language=en-US'.format(movie_id))
-    data = response.json()
-    return "https://image.tmdb.org/t/p/w500/" + data['poster_path']
+# Load the preprocessed data and similarity matrix
+try:
+    movies = pickle.load(open('movies.pkl', 'rb'))
+    similarity = pickle.load(open('similarity.pkl', 'rb'))
+except FileNotFoundError:
+    st.error('Preprocessed data files not found. Please ensure `movies.pkl` and `similarity.pkl` are present in the directory.')
+    st.stop()
 
-# Load the movies and similarity data
-movies_list = pickle.load(open('movies.pkl', 'rb'))
-movies = pd.DataFrame(movies_list)  # Convert the loaded list to a DataFrame
-similarity = pickle.load(open('similarity.pkl', 'rb'))
 
-def recommend(movie):
-    # getting index of movies
-    movie_index = movies[movies['title'] == movie].index[0]
-    distances = similarity[movie_index]
-    movies_list = sorted(list(enumerate(similarity[movie_index])), reverse=True, key=lambda x: x[1])
 
-    recommended_movies = []
-    recommended_movie_posters = []
-    for i in movies_list[1:6]:  # Skip the first one and get the next five
-        movie_id = movies.iloc[i[0]].movie_id
-        recommended_movies.append(movies.iloc[i[0]].title)  
-                #fetch poster from API
-        recommended_movie_posters.append(fetch_poster(movie_id))
-    return recommended_movies , recommended_movie_posters
+def recommend(movie_title):
+    try:
+        # Ensure the movie title exists in the dataset
+        if movie_title not in movies['title'].values:
+            return []
 
-# Streamlit UI
-movies_list = movies['title'].values
-st.title('Movie recommendation system')
+        # Get the index of the movie
+        index = movies[movies['title'] == movie_title].index[0]
+        
+        # Get the similarity scores for the movie
+        distances = sorted(list(enumerate(similarity[index])), reverse=True, key=lambda x: x[1])
+        
+        # Get the titles of the top 6 most similar movies (excluding the input movie)
+        recommended_movies = [movies.iloc[i[0]].title for i in distances[1:7]]
+        return recommended_movies
+    except Exception as e:
+        st.error(f'Error during recommendation: {e}')
+        return []
 
-selected_movie_name = st.selectbox(
-    "How would you like to be connected?",
-    movies_list
-)
+# Streamlit app
+st.title('Movie Recommendation System')
 
-if st.button('Recommend'):
-    names, posters = recommend(selected_movie_name)
-    col1, col2, col3, col4, col5 = st.columns(5)
-    with col1:
-        st.text(names[0])
-        st.image(posters[0])
-    with col2:
-        st.text(names[1])
-        st.image(posters[1])
+st.write('### Enter a movie title to get recommendations')
 
-    with col3:
-        st.text(names[2])
-        st.image(posters[2])
-    with col4:
-        st.text(names[3])
-        st.image(posters[3])
-    with col5:
-        st.text(names[4])
-        st.image(posters[4])
+movie_title = st.text_input('Movie Title', placeholder='The Avengers')
+
+if st.button('Get Recommendations'):
+    if movie_title:
+        recommendations = recommend(movie_title)
+        if recommendations:
+            st.write('### Recommended Movies:')
+            for movie in recommendations:
+                st.write(f'- {movie}')
+        else:
+            st.write('Movie not found in the database. Please try another title.')
+    else:
+        st.write('Please enter a movie title.')
