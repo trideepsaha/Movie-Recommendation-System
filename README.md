@@ -102,7 +102,3 @@ Contributions to the project are welcome! Please fork the repository, make your 
 ## License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for more details.
-
----
-
-Feel free to replace placeholders like `yourusername` with your actual GitHub username and adjust any links or details as needed.
