@@ -17,6 +17,12 @@ Welcome to the Movie Recommendation System! This project leverages machine learn
 
 The Movie Recommendation System uses a content-based approach to recommend movies. The system processes movie metadata, including genres, keywords, and overviews, to build a model that calculates similarities between movies. The recommendations are generated based on cosine similarity of the movie features.
 
+## Running the App
+
+You can also access a live version of the Streamlit app hosted online:
+
+- [Movie Recommendation System](https://movie-recommendation-system-gyrr6wqk4baqcmbmfuhbsp.streamlit.app/)
+
 ## Dataset
 
 The dataset used for this project is the TMDb Movie Metadata dataset. You can download it from the following link:
@@ -88,12 +94,6 @@ To set up this project locally, follow these steps:
     ```
 
     Open your browser and navigate to the local URL provided by Streamlit (usually `http://localhost:8501`).
-
-## Running the App
-
-You can also access a live version of the Streamlit app hosted online:
-
-- [Movie Recommendation System](https://movie-recommendation-system-gyrr6wqk4baqcmbmfuhbsp.streamlit.app/)
 
 ## Contributing
 
