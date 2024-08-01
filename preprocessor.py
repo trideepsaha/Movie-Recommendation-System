@@ -6,6 +6,8 @@ import pickle
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 from nltk.stem.porter import PorterStemmer
+import gzip
+import pickle
 
 # Load the dataset
 movies = pd.read_csv('tmdb_5000_movies.csv')
@@ -74,6 +76,15 @@ similarity = cosine_similarity(vector)
 # Save preprocessed data and similarity matrix
 pickle.dump(new, open('movies.pkl', 'wb'))
 pickle.dump(similarity, open('similarity.pkl', 'wb'))
+
+# Load similarity matrix
+with open('similarity.pkl', 'rb') as f:
+    similarity = pickle.load(f)
+
+# Save the compressed file
+with gzip.open('similarity.pkl.gz', 'wb') as f:
+    pickle.dump(similarity, f)
+
 
 print("Preprocessing complete and data saved.")
 

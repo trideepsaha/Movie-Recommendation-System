@@ -4,11 +4,13 @@ import pickle
 import numpy as np
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
+import gzip
 
 # Load the preprocessed data and similarity matrix
 try:
     movies = pickle.load(open('movies.pkl', 'rb'))
-    similarity = pickle.load(open('similarity.pkl', 'rb'))
+    with gzip.open('similarity.pkl.gz', 'rb') as f:
+        similarity = pickle.load(f)
 except FileNotFoundError:
     st.error('Preprocessed data files not found. Please ensure `movies.pkl` and `similarity.pkl` are present in the directory.')
     st.stop()
